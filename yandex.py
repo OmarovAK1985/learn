@@ -34,7 +34,7 @@ class Yandex_api:
                 params = {
                     'path': f'vk/{k}',
                     'overwrite': False,
-                    'disable_redirects': True,
+                    'disable_redirects': False,
                     'url': v
                 }
                 files_url = 'https://cloud-api.yandex.net/v1/disk/resources/upload'

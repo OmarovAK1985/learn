@@ -4,7 +4,7 @@ from yandex import Yandex_api
 count = 0
 my_dict = {}
 while count == 0:
-    id_vk = input('Введите ID VK: ')
+    id_vk = input('Введите ID пользователя: ')
     vk_id = vk.VK(id_vk)
     my_dict = vk_id.photo_get()
     my_dict_2 = {}

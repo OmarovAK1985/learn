@@ -6,21 +6,21 @@ import time
 
 
 class VK:
-    def __init__(self, token):
-        self.token = token
+    def __init__(self, user_id):
+        self.user_id = user_id
 
     def __str__(self):
-        return self.token
-
-
+        return self.user_id
 
     def photo_get(self):
         url = 'https://api.vk.com/method/photos.get'
         params = {
-            'access_token': self.token,
+            'access_token': '958eb5d439726565e9333aa30e50e0f937ee432e927f0dbd541c541887d919a7c56f95c04217915c32008',
             'album_id': 'wall',
             'v': '5.131',
             'extended': 1,
+            'owner_id': self.user_id,
+            'count': 15
         }
         res = requests.get(url=url, params=params)
         count = 0
@@ -58,21 +58,9 @@ class VK:
                     json_dict['sizes'] = i
                 list_json.append(json_dict)
             file = os.path.join(os.getcwd(), 'file.json')
-            with open(file=file, mode='a+') as file_json:
+            with open(file=file, mode='w') as file_json:
                 json.dump(list_json, file_json, ensure_ascii=False, indent=2)
-
-
-
-
-
-
-
-
-
-
 
             return my_dict
         else:
             print('Некорректно введенный тоken')
-
-
