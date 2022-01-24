@@ -1,5 +1,4 @@
 import vk
-import os
 from yandex import Yandex_api
 
 count = 0
