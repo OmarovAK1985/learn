@@ -3,6 +3,7 @@ import os
 import requests
 from tqdm import tqdm
 import time
+from pprint import pprint
 
 
 class VK:
@@ -51,16 +52,18 @@ class VK:
                 time.sleep(0.1)
             my_dict = dict(zip(list_name_files, list_url))
             list_json = []
-            for m in range(0, len(list_sizes)):
-                json_dict = {}
-                for i, k in zip(list_sizes, list_name_files):
-                    json_dict['file_name'] = k
-                    json_dict['sizes'] = i
+            for i, k in zip(list_sizes, list_name_files):
+                json_dict = {'file_name': k, 'sizes': i}
                 list_json.append(json_dict)
+
             file = os.path.join(os.getcwd(), 'file.json')
             with open(file=file, mode='w') as file_json:
                 json.dump(list_json, file_json, ensure_ascii=False, indent=2)
+            if len(my_dict) < len(my_list):
+                print (f'Обработано фотографий в количестве {len(my_dict)} шт. Фотографии плохого качества не были обработаны в количестве: {len(my_list) - len(my_dict)} шт.')
+            else:
+                print(f'Фотографии в количестве {len(my_list)} были успешно обработаны')
 
             return my_dict
         else:
-            print('Некорректно введенный тоken')
+            print('нет прав на фото')
