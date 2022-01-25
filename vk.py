@@ -3,6 +3,7 @@ import os
 import requests
 from tqdm import tqdm
 import time
+from datetime import datetime
 from pprint import pprint
 
 
@@ -34,8 +35,11 @@ class VK:
             list_name_files = []
             list_sizes = []
             count = 1
+            date = None
             for i in tqdm(my_list, desc='Получение ссылок и присвоение имен файлам'):
                 for k, v in i.items():
+                    if k == 'date':
+                        date = datetime.utcfromtimestamp(v).strftime('%d-%m-%Y')
                     if k == 'sizes':
                         for i_1 in v:
                             for key, val in i_1.items():
@@ -46,11 +50,13 @@ class VK:
                     if k == 'likes':
                         for keys, vals in v.items():
                             if keys == 'count':
-                                name_file = f'Number_file_{count}_Likes_{vals}'
+                                name_file = f'{vals}'
                                 count = count + 1
+                                if name_file in list_name_files:
+                                    name_file = f'{name_file}_Date_upload_{date}'
                                 list_name_files.append(name_file)
                 time.sleep(0.1)
-            my_dict = dict(zip(list_name_files, list_url))
+            my_dict = dict(zip(list_url, list_name_files))
             list_json = []
             for i, k in zip(list_sizes, list_name_files):
                 json_dict = {'file_name': k, 'sizes': i}

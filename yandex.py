@@ -32,10 +32,10 @@ class Yandex_api:
                     'Authorization': f'OAuth {self.token}'
                 }
                 params = {
-                    'path': f'vk/{k}',
+                    'path': f'vk/{v}',
                     'overwrite': False,
                     'disable_redirects': False,
-                    'url': v
+                    'url': k
                 }
                 files_url = 'https://cloud-api.yandex.net/v1/disk/resources/upload'
 
