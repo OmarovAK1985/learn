@@ -1,15 +1,23 @@
+import json
+
 import requests
 from tqdm import tqdm
 import time
+import os
 
 
 class Yandex_api:
-    def __init__(self, token, my_dict):
+    def __init__(self, token):
         self.token = token
-        self.my_dict = my_dict
 
     def __str__(self):
         return self.token
+
+    def create_my_dict(self):
+        file = os.path.join(os.getcwd(), 'file_url.json')
+        with open(file, mode='r', encoding='utf-8') as dict_file:
+            my_dict = json.load(dict_file)
+        return my_dict
 
     def upload_files_from_url(self):
         headers = {
@@ -26,7 +34,7 @@ class Yandex_api:
         res = requests.put(url=files_url, headers=headers, params=params)
 
         if res.status_code == 201 or res.status_code == 409:
-            for k, v in tqdm(self.my_dict.items(), desc='Загрузка файлов на сервер'):
+            for k, v in tqdm(self.create_my_dict().items(), desc='Загрузка файлов на сервер'):
                 headers = {
                     'Content-Type': 'application/json',
                     'Authorization': f'OAuth {self.token}'

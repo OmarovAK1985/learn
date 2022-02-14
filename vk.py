@@ -4,7 +4,6 @@ import requests
 from tqdm import tqdm
 import time
 from datetime import datetime
-from pprint import pprint
 
 
 class VK:
@@ -14,15 +13,40 @@ class VK:
     def __str__(self):
         return self.user_id
 
-    def photo_get(self):
+    @staticmethod
+    def vk_token():
+        file = os.path.join(os.getcwd(), 'token.txt')
+        with open(file, mode='r', encoding='utf-8') as token_file:
+            return token_file.readline()
+
+    def user_get(self):
+
+        url = 'https://api.vk.com/method/users.get'
+        params = {
+            'access_token': self.vk_token(),
+            'v': 5.131,
+            'user_ids': self.user_id,
+            'fields': 'screen_name',
+        }
+        res = requests.get(url=url, params=params)
+        if len(res.json()['response']) != 0:
+            name = res.json()['response'][0]['screen_name']
+            id_user = res.json()['response'][0]['id']
+            self.photo_get(name=name, id_user=id_user)
+            return 1
+        else:
+            return 0
+
+    def photo_get(self, name, id_user):
+        count_photos = int(input("Введите количество фото: "))
         url = 'https://api.vk.com/method/photos.get'
         params = {
-            'access_token': '958eb5d439726565e9333aa30e50e0f937ee432e927f0dbd541c541887d919a7c56f95c04217915c32008',
-            'album_id': 'wall',
+            'access_token': self.vk_token(),
+            'album_id': 'profile',
             'v': '5.131',
             'extended': 1,
-            'owner_id': self.user_id,
-            'count': 15
+            'owner_id': id_user,
+            'count': count_photos
         }
         res = requests.get(url=url, params=params)
         count = 0
@@ -62,26 +86,28 @@ class VK:
             for i in list_name_files:
                 name_file = list_name_files.pop(p)
                 list_name_files.insert(p, f'Number_file_{count}_Count_likes_{name_file}')
-                p = p+1
+                p = p + 1
                 count = count + 1
 
-            print(list_name_files)
             my_dict = dict(zip(list_url, list_name_files))
             list_json = []
             for i, k in zip(list_sizes, list_name_files):
                 json_dict = {'file_name': k, 'sizes': i}
                 list_json.append(json_dict)
 
-
             file = os.path.join(os.getcwd(), 'file.json')
             with open(file=file, mode='w') as file_json:
                 json.dump(list_json, file_json, ensure_ascii=False, indent=2)
+            if count_photos > len(my_list):
+                print(f'Всего фотографий у пользователя с ником {name} - {len(my_list)} шт.')
             if len(my_dict) < len(my_list):
                 print(
                     f'Обработано фотографий в количестве {len(my_dict)} шт. Фотографии плохого качества не были обработаны в количестве: {len(my_list) - len(my_dict)} шт.')
             else:
                 print(f'Фотографии в количестве {len(my_list)} были успешно обработаны')
+            file = os.path.join(os.getcwd(), 'file_url.json')
+            with open(file=file, mode='w') as file_json:
+                json.dump(my_dict, file_json, ensure_ascii=False, indent=2)
 
-            return my_dict
         else:
-            print('нет прав на фото')
+            print('Не корректный Username')
